@@ -1,16 +1,114 @@
-<p>This is a example app to demonstrate how to use http-caching with Rack:Cache and Memcached on the Heroku Cedar stack</p>
+<strong>This page was rendered at <%= Time.now %></strong>
 
-<h2>Instructions</h2>
-<ul>
-  <li>Add the dalli and rack-cache gem to the Gemfile</li>
-  <li>Tell cache_store in production.rb to use dalli and config midleware from heroku env</li>
-  <li>Set expires_in and fresh_when in your controller action.<br>In this static example I generate the etag based on the last modified date on the index page template</li>
-</ul>
+<article class="markdown-body">
+<p>This is a example app to demonstrate how to use http-caching with
+Rack:Cache and Memcached on the Heroku Cedar stack</p>
 
-<p>Application source is available on github: </p>
+<p>Application source and more detailed instructions are available at github: <%= link_to 'https://github.com/mattiasottosson/rack-cache-heroku-cedar-example', 'https://github.com/mattiasottosson/rack-cache-heroku-cedar-example' %></p>
 <p>
   For more information on http-caching, take a look at <%= link_to 'Ryan Bates screencast #321', 'http://railscasts.com/episodes/321-http-caching' %>
   and <%= link_to 'this blog post from Ryan Tomayko', 'http://tomayko.com/writings/things-caches-do' %>
 </p>
 
-<strong>This page was rendered at <%= Time.now %></strong>
+<h2>Instructions</h2>
+<ol>
+<li>
+<p>Add the dalli and rack-cache gem to the Gemfile:</p>
+
+<pre>gem 'dalli'
+gem 'rack-cache'</pre>
+</li>
+<li>
+<p>Tell cache_store in production.rb to use dalli and config midleware from
+the Heroku env.:</p>
+
+<pre>In production.rb:
+
+# Use a different cache store in production
+# config.cache_store = :mem_cache_store
+config.cache_store = :dalli_store
+config.middleware.use Rack::Cache,
+  :verbose =&gt; true,
+  :metastore =&gt; "memcached://#{ENV['MEMCACHE_SERVERS']}",
+  :entitystore =&gt; "memcached://#{ENV['MEMCACHE_SERVERS']}"</pre>
+</li>
+<li>
+<p>Generate etag and set expires in your controller action.  In this static
+example I generate the etag based on the last modified date on the index
+page template:</p>
+
+<pre>def index
+  last_modified = File.mtime("#{Rails.root}/app/views/pages/index.html.erb")
+  fresh_when last_modified: last_modified , public: true, etag: last_modified
+  expires_in 10.seconds, public: true
+end</pre>
+</li>
+<li>
+<p>Add Memcached to your Heroku app.</p>
+</li>
+<li>
+<p>Verify that Rack:Cache gets loaded by running heroku run rake middleware:</p>
+
+<pre>rack-cache-example (master)$ heroku run rake middleware
+Running rake middleware attached to terminal... up, run.1
+use Rack::Cache
+use ActionDispatch::Static
+use Rack::Lock
+use #&lt;ActiveSupport::Cache::Strategy::LocalCache::Middleware:0x0000000395e0e0&gt;
+use Rack::Runtime
+use Rack::MethodOverride
+use ActionDispatch::RequestId
+use Rails::Rack::Logger
+use ActionDispatch::ShowExceptions
+use ActionDispatch::DebugExceptions
+use ActionDispatch::RemoteIp
+use ActionDispatch::Callbacks
+use ActiveRecord::ConnectionAdapters::ConnectionManagement
+use ActiveRecord::QueryCache
+use ActionDispatch::Cookies
+use ActionDispatch::Session::CookieStore
+use ActionDispatch::Flash
+use ActionDispatch::ParamsParser
+use ActionDispatch::Head
+use Rack::ConditionalGet
+use Rack::ETag
+use ActionDispatch::BestStandardsSupport
+use Rack::Cache
+run RackCacheExample::Application.routes</pre>
+</li>
+<li>
+<p>Verify your setup with heroku logs and curl:</p>
+
+<pre>rack-cache-example (master)$ heroku logs
+2012-03-01T17:31:36+00:00 app[web.1]: cache: [HEAD /] fresh
+2012-03-01T17:31:36+00:00 heroku[router]: HEAD rack-cache-example.herokuapp.com/ dyno=web.1 queue=0 wait=0ms service=9ms status=200 bytes=0
+
+rack-cache-example (master)$ curl -I http://rack-cache-example.herokuapp.com/
+HTTP/1.1 200 OK 
+Age: 2
+Cache-Control: max-age=10, public
+Content-length: 1429
+Content-Type: text/html; charset=utf-8
+Date: Thu, 01 Mar 2012 17:32:55 GMT
+Etag: "eb288d4e68e81d141653d5575d682012"
+Last-Modified: Thu, 01 Mar 2012 17:05:12 GMT</pre>
+</li>
+<li>
+<p>When passing in the etag as If-None-Match-header you should see a 304 - not
+modified response:</p>
+
+<pre>rack-cache-example (master)$ curl -I http://rack-cache-example.herokuapp.com/ --header 'If-None-Match: "eb288d4e68e81d141653d5575d682012"'
+HTTP/1.1 304 Not Modified 
+Age: 4
+Cache-Control: max-age=10, public
+Date: Thu, 01 Mar 2012 17:35:23 GMT
+Etag: "eb288d4e68e81d141653d5575d682012"
+Server: WEBrick/1.3.1 (Ruby/1.9.2/2011-07-09)</pre>
+</li>
+<li>
+<p>Voila!</p>
+</li>
+</ol></article>
+
+
+
