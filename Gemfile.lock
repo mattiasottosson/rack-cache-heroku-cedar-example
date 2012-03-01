@@ -37,6 +37,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.2.0)
+    dalli (1.1.4)
     erubis (2.7.0)
     execjs (1.3.0)
       multi_json (~> 1.0)
@@ -105,8 +106,10 @@ PLATFORMS
 
 DEPENDENCIES
   coffee-rails (~> 3.2.1)
+  dalli
   jquery-rails
   pg
+  rack-cache
   rails (= 3.2.1)
   sass-rails (~> 3.2.3)
   sqlite3
