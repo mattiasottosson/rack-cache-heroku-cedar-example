@@ -2,6 +2,12 @@
 
 This is a example app to demonstrate how to use http-caching with Rack:Cache and Memcached on the Heroku Cedar stack
 
+For more information on http-caching, take a look Ryan Bates screencast #321: http://railscasts.com/episodes/321-http-caching
+and this blog post from Ryan Tomayko: http://tomayko.com/writings/things-caches-do
+
+Example app on Heorku:
+http://rack-cache-example.herokuapp.com/
+
 
 == Instructions
 
