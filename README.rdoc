@@ -26,7 +26,7 @@ http://rack-cache-example.herokuapp.com/
         :metastore => "memcached://#{ENV['MEMCACHE_SERVERS']}",
         :entitystore => "memcached://#{ENV['MEMCACHE_SERVERS']}"
 
-3.  Generate etag and set expires in your controller action. 
+3.  Generate etag and set expires_in your controller action. 
     In this static example I generate the etag based on the last modified date on the index page template:
     
       def index

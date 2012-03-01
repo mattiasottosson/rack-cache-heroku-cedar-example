@@ -33,7 +33,7 @@ config.middleware.use Rack::Cache,
   :entitystore =&gt; "memcached://#{ENV['MEMCACHE_SERVERS']}"</pre>
 </li>
 <li>
-<p>Generate etag and set expires in your controller action.  In this static
+<p>Generate etag and set expires_in your controller action.  In this static
 example I generate the etag based on the last modified date on the index
 page template:</p>
 
