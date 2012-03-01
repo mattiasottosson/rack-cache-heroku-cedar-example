@@ -1,3 +1,16 @@
-<p>This is a example app to demonstrate how to use http-caching with Rack:Cache and Memcached on the Heroku Cedar stack </p>
-<p>For more information on http-caching, take a look at <%= link_to 'Ryan Bates screencast #321', 'http://railscasts.com/episodes/321-http-caching' %></p>
-<p>This page was rendered at <%= Time.now %></p>
+<p>This is a example app to demonstrate how to use http-caching with Rack:Cache and Memcached on the Heroku Cedar stack</p>
+
+<h2>Instructions</h2>
+<ul>
+  <li>Add the dalli and rack-cache gem to the Gemfile</li>
+  <li>Tell cache_store in production.rb to use dalli and config midleware from heroku env</li>
+  <li>Set expires_in and fresh_when in your controller action.<br>In this static example I generate the etag based on the last modified date on the index page template</li>
+</ul>
+
+<p>Application source is available on github: </p>
+<p>
+  For more information on http-caching, take a look at <%= link_to 'Ryan Bates screencast #321', 'http://railscasts.com/episodes/321-http-caching' %>
+  and <%= link_to 'this blog post from Ryan Tomayko', 'http://tomayko.com/writings/things-caches-do' %>
+</p>
+
+<strong>This page was rendered at <%= Time.now %></strong>
