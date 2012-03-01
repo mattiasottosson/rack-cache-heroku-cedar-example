@@ -30,3 +30,65 @@ This is a example app to demonstrate how to use http-caching with Rack:Cache and
       end
       
 4.  Add Memcached to your Heroku app.
+
+5.  Verify that Rack:Cache gets loaded by running heroku run rake middleware:
+
+  rack-cache-example (master)$ heroku run rake middleware
+  Running rake middleware attached to terminal... up, run.1
+  use Rack::Cache
+  use ActionDispatch::Static
+  use Rack::Lock
+  use #<ActiveSupport::Cache::Strategy::LocalCache::Middleware:0x0000000395e0e0>
+  use Rack::Runtime
+  use Rack::MethodOverride
+  use ActionDispatch::RequestId
+  use Rails::Rack::Logger
+  use ActionDispatch::ShowExceptions
+  use ActionDispatch::DebugExceptions
+  use ActionDispatch::RemoteIp
+  use ActionDispatch::Callbacks
+  use ActiveRecord::ConnectionAdapters::ConnectionManagement
+  use ActiveRecord::QueryCache
+  use ActionDispatch::Cookies
+  use ActionDispatch::Session::CookieStore
+  use ActionDispatch::Flash
+  use ActionDispatch::ParamsParser
+  use ActionDispatch::Head
+  use Rack::ConditionalGet
+  use Rack::ETag
+  use ActionDispatch::BestStandardsSupport
+  use Rack::Cache
+  run RackCacheExample::Application.routes
+  
+6.  Verify your setup with heroku logs and curl:
+
+  rack-cache-example (master)$ heroku logs
+  2012-03-01T17:31:36+00:00 app[web.1]: cache: [HEAD /] fresh
+  2012-03-01T17:31:36+00:00 heroku[router]: HEAD rack-cache-example.herokuapp.com/ dyno=web.1 queue=0 wait=0ms service=9ms status=200 bytes=0
+  
+  rack-cache-example (master)$ curl -I http://rack-cache-example.herokuapp.com/
+  HTTP/1.1 200 OK 
+  Age: 2
+  Cache-Control: max-age=10, public
+  Content-length: 1429
+  Content-Type: text/html; charset=utf-8
+  Date: Thu, 01 Mar 2012 17:32:55 GMT
+  Etag: "eb288d4e68e81d141653d5575d682012"
+  Last-Modified: Thu, 01 Mar 2012 17:05:12 GMT
+  
+7. When passing in the etag as If-None-Match-header you should see a 304 - not modified response
+  
+  rack-cache-example (master)$ curl -I http://rack-cache-example.herokuapp.com/ --header 'If-None-Match: "eb288d4e68e81d141653d5575d682012"'
+  HTTP/1.1 304 Not Modified 
+  Age: 4
+  Cache-Control: max-age=10, public
+  Date: Thu, 01 Mar 2012 17:35:23 GMT
+  Etag: "eb288d4e68e81d141653d5575d682012"
+  Server: WEBrick/1.3.1 (Ruby/1.9.2/2011-07-09)
+
+8. Voila!
+  
+  
+  
+
+
