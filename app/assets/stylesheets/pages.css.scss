@@ -1,3 +1,37 @@
 // Place all the styles related to the pages controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+body {
+  color: #333;
+  padding: 30px 60px;
+  font-size: 1.25em;
+  line-height: 1.4em;
+  font-family: corbel, 'lucida grande', helvetica, sans-serif;
+  width: 800px;
+  margin: 60px auto 50px auto;
+  padding: 50px 50px 40px 50px;
+}
+
+pre {
+  -moz-border-radius: 9px;
+  -webkit-border-radius: 9px;
+  border-radius: 9px;
+  /*IE 7 AND 8 DO NOT SUPPORT BORDER RADIUS*/
+  -moz-box-shadow: 0px 0px 9px #000000;
+  -webkit-box-shadow: 0px 0px 9px #000000;
+  box-shadow: 0px 0px 9px #000000;
+  /*IE 7 AND 8 DO NOT SUPPORT BLUR PROPERTY OF SHADOWS*/
+  padding: 15px;
+  overflow: scroll;
+}
+
+ol,li {
+  margin: 0!important;
+  padding: 0;
+}
+
+
+a {
+  color: #D10052;
+}
